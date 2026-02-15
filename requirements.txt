@@ -1,0 +1,6 @@
+streamlit
+pandas
+curl_cffi
+beautifulsoup4
+deep_translator
+plotly
