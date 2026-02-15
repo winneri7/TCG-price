@@ -20,7 +20,7 @@ WEISS_ORDER = ["니케", "벽람항로", "렌탈여친", "데이트 어 라이�
 GAME_URLS = {"포켓몬": "https://yuyu-tei.jp/sell/poc/s/search", "원피스": "https://yuyu-tei.jp/sell/opc/s/search", "바이스슈발츠": "https://yuyu-tei.jp/sell/ws/s/search"}
 translator = GoogleTranslator(source='ja', target='ko')
 
-# --- 2. DATA ENGINE (MIGRATION ADDED) ---
+# --- 2. DATA ENGINE ---
 def load_data():
     if not os.path.exists(DATA_FILE):
         return pd.DataFrame(columns=["card_id", "game", "sub_category", "last_price", "image_url", "stock", "title", "title_ko", "detail_url"])
@@ -28,7 +28,7 @@ def load_data():
     if 'last_price' in df.columns:
         df['last_price'] = pd.to_numeric(df['last_price'], errors='coerce').fillna(0).astype(int)
     
-    # 데이터 마이그레이션: '일반' -> 게임명으로 자동 변환
+    # 데이터 마이그레이션
     if not df.empty and 'sub_category' in df.columns and 'game' in df.columns:
         mask = (df['sub_category'] == '일반')
         df.loc[mask, 'sub_category'] = df.loc[mask, 'game']
@@ -56,7 +56,7 @@ def get_price_change_info(card_id, current_price):
     elif diff < 0: return f"▼ {abs(diff):,}", "#2563EB"
     else: return "-", "#94a3b8"
 
-# --- 3. SCRAPING ENGINE (High-Value Priority) ---
+# --- 3. SCRAPING ENGINE ---
 def get_yuyutei_info(game, card_id):
     url = GAME_URLS.get(game)
     if not url: return None
@@ -105,75 +105,100 @@ def get_yuyutei_info(game, card_id):
         return {"price": price, "stock": stock, "img": img_url, "t_ja": t_ja, "t_ko": t_ko, "url": d_url}
     except: return None
 
-# --- 4. COMMERCIAL DESIGN SYSTEM ---
+# --- 4. COMMERCIAL DESIGN SYSTEM (반응형 적용) ---
 st.set_page_config(page_title="TCG 시세동향 Pro", layout="wide")
 st.markdown("""
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap');
+        
+        /* [공통] 기본 폰트 설정 */
         .stApp { background: #FAF9F6 !important; font-family: 'Pretendard', sans-serif; color: #1e293b !important; }
         [data-testid="stSidebar"] { background-color: #F8F7F4 !important; border-right: 1px solid #E2E8F0; }
+        .stDataFrame, div[data-testid="stTable"] { background: white !important; border-radius: 8px; border: 1px solid #E2E8F0; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
         
-        .stDataFrame, div[data-testid="stTable"] { 
-            background: white !important; border-radius: 8px; border: 1px solid #E2E8F0; box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-        }
-
-        [data-testid="stVerticalBlockBorderWrapper"] {
-            background-color: white;
-            border: 1px solid #E2E8F0; border-radius: 16px; padding: 0px !important; margin-bottom: 24px;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
-            transition: all 0.3s ease; overflow: hidden;
-        }
-        [data-testid="stVerticalBlockBorderWrapper"]:hover {
-            transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-            border-color: #B45309;
-        }
-
+        /* ------------------------------------------------------------- */
+        /* [PC 버전 스타일] - 기본적으로 시원시원하고 큰 디자인 */
+        /* ------------------------------------------------------------- */
         .card-title { 
-            font-weight: 700; font-size: 0.85rem; color: #0F172A; line-height: 1.4; 
+            font-weight: 700; font-size: 0.95rem; color: #0F172A; line-height: 1.4; 
             margin-bottom: 4px; padding: 0 14px;
-            display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; height: 58px;
+            display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; height: 65px;
         }
-        .card-id { font-size: 0.7rem; color: #94A3B8; font-weight: 500; margin-bottom: 8px; padding: 0 14px; letter-spacing: -0.01em; }
-        
+        .card-id { font-size: 0.75rem; color: #94A3B8; font-weight: 500; margin-bottom: 8px; padding: 0 14px; }
         div[data-testid="stPopover"] button {
             width: calc(100% - 28px); margin-left: 14px; margin-right: 14px;
-            border: 1px solid #E2E8F0 !important; background-color: #F8FAFC !important;
-            color: #0F172A !important; font-weight: 800 !important; font-size: 1.1rem !important;
-            padding: 4px 0px !important; border-radius: 8px; line-height: 1.2;
-            min-height: auto !important; margin-bottom: 2px !important;
+            font-size: 1.1rem !important; padding: 4px 0px !important; min-height: auto !important;
+            border: 1px solid #E2E8F0 !important; background-color: #F8FAFC !important; color: #0F172A !important; font-weight: 800 !important;
         }
-        div[data-testid="stPopover"] button:hover {
-            border-color: #B45309 !important; color: #B45309 !important; background-color: #FFF7ED !important;
-        }
-
-        .compact-info-row {
-            padding: 0 14px; margin-top: 2px; margin-bottom: 8px;
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .change-indicator { font-size: 0.75rem; font-weight: 700; }
-        .stock-tag { 
-            font-size: 0.9rem; color: #475569; font-weight: 700; 
-            background: #F1F5F9; padding: 3px 10px; border-radius: 6px; 
+        .market-btn { font-size: 0.75rem !important; padding: 10px 0; }
+        
+        /* 카드 박스 외형 (PC) */
+        [data-testid="stVerticalBlockBorderWrapper"] {
+            background-color: white; border: 1px solid #E2E8F0; border-radius: 16px; padding: 0px !important; margin-bottom: 24px;
+            box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.05); overflow: hidden;
         }
 
-        .market-row { 
-            display: flex; width: 100%; border-top: 1px solid #F1F5F9; background: #FAFAFA; margin-top: 0px;
+        /* ------------------------------------------------------------- */
+        /* [모바일 버전 스타일] - 화면이 좁을 때(768px 이하) 자동으로 축소 */
+        /* ------------------------------------------------------------- */
+        @media only screen and (max-width: 768px) {
+            /* 상하좌우 여백 축소 */
+            .block-container {
+                padding-top: 1rem !important; padding-bottom: 2rem !important;
+                padding-left: 0.5rem !important; padding-right: 0.5rem !important;
+            }
+            
+            /* 제목 글씨, 높이, 줄 수 축소 */
+            .card-title {
+                font-size: 0.8rem !important;
+                height: 45px !important;
+                -webkit-line-clamp: 2 !important;
+                padding: 0 8px !important;
+                margin-bottom: 2px !important;
+            }
+            
+            /* ID 글씨 축소 */
+            .card-id { 
+                font-size: 0.65rem !important; 
+                margin-bottom: 4px !important; 
+                padding: 0 8px !important; 
+            }
+            
+            /* 가격 버튼 축소 */
+            div[data-testid="stPopover"] button {
+                width: calc(100% - 16px) !important; margin: 0 8px 4px 8px !important;
+                font-size: 0.95rem !important;
+            }
+            
+            /* 카드 박스 둥글기 및 간격 축소 */
+            [data-testid="stVerticalBlockBorderWrapper"] {
+                border-radius: 10px !important;
+                margin-bottom: 12px !important;
+            }
+            
+            /* 하단 링크, 재고 정보 축소 */
+            .market-btn { font-size: 0.7rem !important; padding: 8px 0 !important; }
+            .compact-info-row { padding: 0 8px !important; margin-bottom: 6px !important; }
+            .stock-tag { font-size: 0.7rem !important; padding: 2px 6px !important; }
+            .change-indicator { font-size: 0.7rem !important; }
+            
+            /* 섹션 헤더 축소 */
+            .section-header {
+                font-size: 1rem !important; padding: 8px 12px !important;
+                margin: 15px 0 10px 0 !important;
+            }
         }
-        .market-btn {
-            flex: 1; text-align: center; padding: 10px 0;
-            color: #64748B !important; font-size: 0.7rem; font-weight: 600;
-            text-decoration: none; border-right: 1px solid #F1F5F9;
-            transition: background 0.1s;
-        }
+        
+        /* 공통 유틸리티 */
+        div[data-testid="stPopover"] button:hover { border-color: #B45309 !important; color: #B45309 !important; background-color: #FFF7ED !important; }
+        .market-row { display: flex; width: 100%; border-top: 1px solid #F1F5F9; background: #FAFAFA; }
+        .market-btn { flex: 1; text-align: center; color: #64748B !important; font-weight: 600; text-decoration: none; border-right: 1px solid #F1F5F9; }
         .market-btn:last-child { border-right: none; }
         .market-btn:hover { background: white; color: #B45309 !important; font-weight: 700; }
-        
-        .section-header {
-            background: white; padding: 12px 20px; border-radius: 10px;
-            border-left: 5px solid #B45309; box-shadow: 0 2px 4px rgba(0,0,0,0.03);
-            margin: 25px 0 15px 0; font-size: 1.1rem; font-weight: 700; color: #1E293B;
-            display: flex; align-items: center;
-        }
+        .section-header { background: white; padding: 12px 20px; border-radius: 10px; border-left: 5px solid #B45309; box-shadow: 0 2px 4px rgba(0,0,0,0.03); margin: 25px 0 15px 0; font-size: 1.1rem; font-weight: 700; color: #1E293B; display: flex; align-items: center; }
+        .compact-info-row { padding: 0 14px; margin-top: 2px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+        .change-indicator { font-size: 0.75rem; font-weight: 700; }
+        .stock-tag { font-size: 0.9rem; color: #475569; font-weight: 700; background: #F1F5F9; padding: 3px 10px; border-radius: 6px; }
     </style>
 """, unsafe_allow_html=True)
 
