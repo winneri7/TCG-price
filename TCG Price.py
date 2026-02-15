@@ -104,7 +104,7 @@ def get_yuyutei_info(game, card_id):
         return {"price": price, "stock": stock, "img": img_url, "t_ja": t_ja, "t_ko": t_ko, "url": d_url}
     except: return None
 
-# --- 4. COMMERCIAL DESIGN SYSTEM (모바일 최적화: Price Up / Others Down) ---
+# --- 4. COMMERCIAL DESIGN SYSTEM (최종 모바일 최적화) ---
 st.set_page_config(page_title="TCG 시세동향 Pro", layout="wide")
 st.markdown("""
     <style>
@@ -136,38 +136,38 @@ st.markdown("""
         }
 
         /* ------------------------------------------------------------- */
-        /* [모바일 버전 스타일] - 768px 이하 (Price ↑, Others ↓) */
+        /* [모바일 버전 스타일] - 768px 이하 (Price 10% ↓, Others ↓) */
         /* ------------------------------------------------------------- */
         @media only screen and (max-width: 768px) {
             
-            /* [Price 버튼] 10px -> 12px로 약 20% 확대 */
+            /* [Price 버튼] 높이와 여백 */
             div[data-testid="stPopover"] button {
                 width: calc(100% - 8px) !important; 
                 margin: 0 4px 2px 4px !important;
-                min-height: 24px !important; /* 버튼 높이 살짝 여유있게 */
+                min-height: 22px !important; /* 버튼 높이 살짝 줄임 */
                 padding: 0px !important;
                 border-radius: 4px !important;
             }
-            /* 버튼 내부 글씨 설정 */
+            /* [Price 글씨] 12px -> 11px (약 10% 감소) */
             div[data-testid="stPopover"] button * {
-                font-size: 12px !important; /* [확대] 잘 보이게 */
-                line-height: 24px !important;
+                font-size: 11px !important; /* [축소] 최종 반영 */
+                line-height: 22px !important;
                 white-space: nowrap !important; /* 줄바꿈 금지 */
             }
 
-            /* [나머지 글씨] 20% 축소 */
+            /* [나머지 글씨] 20% 축소 유지 */
             
-            /* 1. 제목: 0.7rem -> 0.55rem (약 8.8px) */
+            /* 1. 제목: 0.7rem -> 0.55rem */
             .card-title {
                 font-size: 0.55rem !important;
-                height: 32px !important; /* 높이도 줄여서 공간 확보 */
+                height: 32px !important;
                 -webkit-line-clamp: 2 !important;
                 padding: 0 6px !important;
                 margin-bottom: 2px !important;
                 line-height: 1.2 !important;
             }
             
-            /* 2. 카드 ID: 0.6rem -> 0.5rem (약 8px) */
+            /* 2. 카드 ID: 0.6rem -> 0.5rem */
             .card-id { 
                 font-size: 0.5rem !important; 
                 margin-bottom: 2px !important; 
@@ -192,7 +192,7 @@ st.markdown("""
                 margin-bottom: 8px !important;
             }
             
-            /* 섹션 제목도 조금 작게 */
+            /* 섹션 제목 */
             .section-header {
                 font-size: 0.9rem !important; padding: 6px 10px !important;
                 margin: 10px 0 8px 0 !important;
