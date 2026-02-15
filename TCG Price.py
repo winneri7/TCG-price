@@ -104,7 +104,7 @@ def get_yuyutei_info(game, card_id):
         return {"price": price, "stock": stock, "img": img_url, "t_ja": t_ja, "t_ko": t_ko, "url": d_url}
     except: return None
 
-# --- 4. COMMERCIAL DESIGN SYSTEM (가격 초소형화 적용) ---
+# --- 4. COMMERCIAL DESIGN SYSTEM (모바일 가격: 한 줄 강제 + 초소형) ---
 st.set_page_config(page_title="TCG 시세동향 Pro", layout="wide")
 st.markdown("""
     <style>
@@ -136,7 +136,7 @@ st.markdown("""
         }
 
         /* ------------------------------------------------------------- */
-        /* [모바일 버전 스타일] - Price 글씨 30% 추가 축소 */
+        /* [모바일 버전 스타일] - 가격 한줄 강제 & 폰트 대폭 축소 */
         /* ------------------------------------------------------------- */
         @media only screen and (max-width: 768px) {
             /* 1. 제목: 0.7rem */
@@ -156,14 +156,15 @@ st.markdown("""
                 padding: 0 6px !important; 
             }
             
-            /* 3. 가격 버튼: 0.4rem (약 6~7px)로 아주 작게 축소 */
+            /* 3. [핵심 수정] 가격 버튼: 절대 줄바꿈 안 되게 설정 */
             div[data-testid="stPopover"] button {
                 width: calc(100% - 8px) !important; 
                 margin: 0 4px 2px 4px !important;
-                font-size: 0.4rem !important; /* 요청하신 대로 아주 작게 */
-                min-height: 18px !important; /* 버튼 높이도 납작하게 */
+                font-size: 10px !important; /* 10px로 고정 (매우 작음) */
+                white-space: nowrap !important; /* [중요] 줄바꿈 금지 */
+                min-height: 20px !important; 
                 padding: 0px !important;
-                line-height: 18px !important;
+                line-height: 20px !important;
             }
             
             /* 4. 링크/태그 글씨: 0.6rem */
