@@ -104,7 +104,7 @@ def get_yuyutei_info(game, card_id):
         return {"price": price, "stock": stock, "img": img_url, "t_ja": t_ja, "t_ko": t_ko, "url": d_url}
     except: return None
 
-# --- 4. COMMERCIAL DESIGN SYSTEM (모바일 가격 초소형화) ---
+# --- 4. COMMERCIAL DESIGN SYSTEM (가격 초소형화 적용) ---
 st.set_page_config(page_title="TCG 시세동향 Pro", layout="wide")
 st.markdown("""
     <style>
@@ -156,19 +156,19 @@ st.markdown("""
                 padding: 0 6px !important; 
             }
             
-            /* 3. 가격 버튼: 0.55rem (약 9px)로 대폭 축소 */
+            /* 3. 가격 버튼: 0.4rem (약 6~7px)로 아주 작게 축소 */
             div[data-testid="stPopover"] button {
                 width: calc(100% - 8px) !important; 
                 margin: 0 4px 2px 4px !important;
-                font-size: 0.55rem !important; /* 요청하신 대로 팍 줄임 */
-                min-height: 22px !important; /* 버튼 높이도 납작하게 */
+                font-size: 0.4rem !important; /* 요청하신 대로 아주 작게 */
+                min-height: 18px !important; /* 버튼 높이도 납작하게 */
                 padding: 0px !important;
-                line-height: 22px !important;
+                line-height: 18px !important;
             }
             
             /* 4. 링크/태그 글씨: 0.6rem */
             .market-btn { font-size: 0.6rem !important; padding: 4px 0 !important; }
-            .stock-tag { font-size: 0.6rem !important; padding: 1px 4px !important; }
+            .stock-tag { font-size: 0.6rem !important; padding: 2px 4px !important; }
             .change-indicator { font-size: 0.6rem !important; }
             .compact-info-row { padding: 0 6px !important; margin-bottom: 2px !important; }
             
