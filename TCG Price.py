@@ -28,7 +28,6 @@ def load_data():
     if 'last_price' in df.columns:
         df['last_price'] = pd.to_numeric(df['last_price'], errors='coerce').fillna(0).astype(int)
     
-    # 데이터 마이그레이션
     if not df.empty and 'sub_category' in df.columns and 'game' in df.columns:
         mask = (df['sub_category'] == '일반')
         df.loc[mask, 'sub_category'] = df.loc[mask, 'game']
@@ -105,7 +104,7 @@ def get_yuyutei_info(game, card_id):
         return {"price": price, "stock": stock, "img": img_url, "t_ja": t_ja, "t_ko": t_ko, "url": d_url}
     except: return None
 
-# --- 4. COMMERCIAL DESIGN SYSTEM (반응형 적용) ---
+# --- 4. COMMERCIAL DESIGN SYSTEM (모바일 초소형 최적화) ---
 st.set_page_config(page_title="TCG 시세동향 Pro", layout="wide")
 st.markdown("""
     <style>
@@ -117,7 +116,7 @@ st.markdown("""
         .stDataFrame, div[data-testid="stTable"] { background: white !important; border-radius: 8px; border: 1px solid #E2E8F0; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
         
         /* ------------------------------------------------------------- */
-        /* [PC 버전 스타일] - 기본적으로 시원시원하고 큰 디자인 */
+        /* [PC 버전 스타일] - 쾌적하고 큰 디자인 (변경 없음) */
         /* ------------------------------------------------------------- */
         .card-title { 
             font-weight: 700; font-size: 0.95rem; color: #0F172A; line-height: 1.4; 
@@ -131,61 +130,52 @@ st.markdown("""
             border: 1px solid #E2E8F0 !important; background-color: #F8FAFC !important; color: #0F172A !important; font-weight: 800 !important;
         }
         .market-btn { font-size: 0.75rem !important; padding: 10px 0; }
-        
-        /* 카드 박스 외형 (PC) */
         [data-testid="stVerticalBlockBorderWrapper"] {
             background-color: white; border: 1px solid #E2E8F0; border-radius: 16px; padding: 0px !important; margin-bottom: 24px;
             box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.05); overflow: hidden;
         }
 
         /* ------------------------------------------------------------- */
-        /* [모바일 버전 스타일] - 화면이 좁을 때(768px 이하) 자동으로 축소 */
+        /* [모바일 버전 스타일] - 글씨 크기 대폭 축소 (Compact Mode) */
         /* ------------------------------------------------------------- */
         @media only screen and (max-width: 768px) {
-            /* 상하좌우 여백 축소 */
-            .block-container {
-                padding-top: 1rem !important; padding-bottom: 2rem !important;
-                padding-left: 0.5rem !important; padding-right: 0.5rem !important;
-            }
-            
-            /* 제목 글씨, 높이, 줄 수 축소 */
+            /* 1. 제목: 0.8rem -> 0.7rem (약 11px) */
             .card-title {
-                font-size: 0.8rem !important;
-                height: 45px !important;
+                font-size: 0.7rem !important;
+                height: 40px !important; /* 높이도 더 줄임 */
                 -webkit-line-clamp: 2 !important;
-                padding: 0 8px !important;
+                padding: 0 6px !important;
                 margin-bottom: 2px !important;
+                line-height: 1.2 !important;
             }
             
-            /* ID 글씨 축소 */
+            /* 2. 카드 ID: 0.65rem -> 0.6rem (약 9.6px) */
             .card-id { 
-                font-size: 0.65rem !important; 
+                font-size: 0.6rem !important; 
                 margin-bottom: 4px !important; 
-                padding: 0 8px !important; 
+                padding: 0 6px !important; 
             }
             
-            /* 가격 버튼 축소 */
+            /* 3. 가격 버튼: 0.95rem -> 0.85rem (약 13.6px) */
             div[data-testid="stPopover"] button {
-                width: calc(100% - 16px) !important; margin: 0 8px 4px 8px !important;
-                font-size: 0.95rem !important;
+                width: calc(100% - 12px) !important; margin: 0 6px 4px 6px !important;
+                font-size: 0.85rem !important;
             }
             
-            /* 카드 박스 둥글기 및 간격 축소 */
+            /* 4. 링크/태그 글씨: 0.7rem -> 0.6rem (약 9.6px) */
+            .market-btn { font-size: 0.6rem !important; padding: 6px 0 !important; }
+            .stock-tag { font-size: 0.6rem !important; padding: 2px 4px !important; }
+            .change-indicator { font-size: 0.65rem !important; }
+            .compact-info-row { padding: 0 6px !important; margin-bottom: 4px !important; }
+            
+            /* 5. 여백 최소화 */
+            .block-container {
+                padding-top: 0.5rem !important; padding-bottom: 1rem !important;
+                padding-left: 0.2rem !important; padding-right: 0.2rem !important;
+            }
             [data-testid="stVerticalBlockBorderWrapper"] {
-                border-radius: 10px !important;
-                margin-bottom: 12px !important;
-            }
-            
-            /* 하단 링크, 재고 정보 축소 */
-            .market-btn { font-size: 0.7rem !important; padding: 8px 0 !important; }
-            .compact-info-row { padding: 0 8px !important; margin-bottom: 6px !important; }
-            .stock-tag { font-size: 0.7rem !important; padding: 2px 6px !important; }
-            .change-indicator { font-size: 0.7rem !important; }
-            
-            /* 섹션 헤더 축소 */
-            .section-header {
-                font-size: 1rem !important; padding: 8px 12px !important;
-                margin: 15px 0 10px 0 !important;
+                border-radius: 8px !important;
+                margin-bottom: 8px !important;
             }
         }
         
