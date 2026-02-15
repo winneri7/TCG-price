@@ -104,7 +104,7 @@ def get_yuyutei_info(game, card_id):
         return {"price": price, "stock": stock, "img": img_url, "t_ja": t_ja, "t_ko": t_ko, "url": d_url}
     except: return None
 
-# --- 4. COMMERCIAL DESIGN SYSTEM (모바일 가격표 대폭 축소) ---
+# --- 4. COMMERCIAL DESIGN SYSTEM (모바일 가격 초소형화) ---
 st.set_page_config(page_title="TCG 시세동향 Pro", layout="wide")
 st.markdown("""
     <style>
@@ -136,7 +136,7 @@ st.markdown("""
         }
 
         /* ------------------------------------------------------------- */
-        /* [모바일 버전 스타일] - Price 글씨 팍 줄임 */
+        /* [모바일 버전 스타일] - Price 글씨 30% 추가 축소 */
         /* ------------------------------------------------------------- */
         @media only screen and (max-width: 768px) {
             /* 1. 제목: 0.7rem */
@@ -152,24 +152,25 @@ st.markdown("""
             /* 2. 카드 ID: 0.6rem */
             .card-id { 
                 font-size: 0.6rem !important; 
-                margin-bottom: 4px !important; 
+                margin-bottom: 2px !important; 
                 padding: 0 6px !important; 
             }
             
-            /* 3. 가격 버튼: 0.75rem (약 12px)로 대폭 축소 */
+            /* 3. 가격 버튼: 0.55rem (약 9px)로 대폭 축소 */
             div[data-testid="stPopover"] button {
-                width: calc(100% - 12px) !important; 
-                margin: 0 6px 4px 6px !important;
-                font-size: 0.75rem !important; /* 여기를 팍 줄였습니다 */
-                min-height: 28px !important; /* 버튼 높이도 줄임 */
-                padding: 2px 0 !important;
+                width: calc(100% - 8px) !important; 
+                margin: 0 4px 2px 4px !important;
+                font-size: 0.55rem !important; /* 요청하신 대로 팍 줄임 */
+                min-height: 22px !important; /* 버튼 높이도 납작하게 */
+                padding: 0px !important;
+                line-height: 22px !important;
             }
             
             /* 4. 링크/태그 글씨: 0.6rem */
-            .market-btn { font-size: 0.6rem !important; padding: 6px 0 !important; }
-            .stock-tag { font-size: 0.6rem !important; padding: 2px 4px !important; }
-            .change-indicator { font-size: 0.65rem !important; }
-            .compact-info-row { padding: 0 6px !important; margin-bottom: 4px !important; }
+            .market-btn { font-size: 0.6rem !important; padding: 4px 0 !important; }
+            .stock-tag { font-size: 0.6rem !important; padding: 1px 4px !important; }
+            .change-indicator { font-size: 0.6rem !important; }
+            .compact-info-row { padding: 0 6px !important; margin-bottom: 2px !important; }
             
             /* 5. 여백 최소화 */
             .block-container {
