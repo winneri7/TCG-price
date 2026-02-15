@@ -104,7 +104,7 @@ def get_yuyutei_info(game, card_id):
         return {"price": price, "stock": stock, "img": img_url, "t_ja": t_ja, "t_ko": t_ko, "url": d_url}
     except: return None
 
-# --- 4. COMMERCIAL DESIGN SYSTEM (모바일 초소형 최적화) ---
+# --- 4. COMMERCIAL DESIGN SYSTEM (모바일 가격표 대폭 축소) ---
 st.set_page_config(page_title="TCG 시세동향 Pro", layout="wide")
 st.markdown("""
     <style>
@@ -136,33 +136,36 @@ st.markdown("""
         }
 
         /* ------------------------------------------------------------- */
-        /* [모바일 버전 스타일] - 글씨 크기 대폭 축소 (Compact Mode) */
+        /* [모바일 버전 스타일] - Price 글씨 팍 줄임 */
         /* ------------------------------------------------------------- */
         @media only screen and (max-width: 768px) {
-            /* 1. 제목: 0.8rem -> 0.7rem (약 11px) */
+            /* 1. 제목: 0.7rem */
             .card-title {
                 font-size: 0.7rem !important;
-                height: 40px !important; /* 높이도 더 줄임 */
+                height: 40px !important;
                 -webkit-line-clamp: 2 !important;
                 padding: 0 6px !important;
                 margin-bottom: 2px !important;
                 line-height: 1.2 !important;
             }
             
-            /* 2. 카드 ID: 0.65rem -> 0.6rem (약 9.6px) */
+            /* 2. 카드 ID: 0.6rem */
             .card-id { 
                 font-size: 0.6rem !important; 
                 margin-bottom: 4px !important; 
                 padding: 0 6px !important; 
             }
             
-            /* 3. 가격 버튼: 0.95rem -> 0.85rem (약 13.6px) */
+            /* 3. 가격 버튼: 0.75rem (약 12px)로 대폭 축소 */
             div[data-testid="stPopover"] button {
-                width: calc(100% - 12px) !important; margin: 0 6px 4px 6px !important;
-                font-size: 0.85rem !important;
+                width: calc(100% - 12px) !important; 
+                margin: 0 6px 4px 6px !important;
+                font-size: 0.75rem !important; /* 여기를 팍 줄였습니다 */
+                min-height: 28px !important; /* 버튼 높이도 줄임 */
+                padding: 2px 0 !important;
             }
             
-            /* 4. 링크/태그 글씨: 0.7rem -> 0.6rem (약 9.6px) */
+            /* 4. 링크/태그 글씨: 0.6rem */
             .market-btn { font-size: 0.6rem !important; padding: 6px 0 !important; }
             .stock-tag { font-size: 0.6rem !important; padding: 2px 4px !important; }
             .change-indicator { font-size: 0.65rem !important; }
