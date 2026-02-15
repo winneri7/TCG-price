@@ -104,7 +104,7 @@ def get_yuyutei_info(game, card_id):
         return {"price": price, "stock": stock, "img": img_url, "t_ja": t_ja, "t_ko": t_ko, "url": d_url}
     except: return None
 
-# --- 4. COMMERCIAL DESIGN SYSTEM (모바일 가격: 한 줄 강제 + 초소형) ---
+# --- 4. COMMERCIAL DESIGN SYSTEM (모바일 가격 강제 축소) ---
 st.set_page_config(page_title="TCG 시세동향 Pro", layout="wide")
 st.markdown("""
     <style>
@@ -136,10 +136,27 @@ st.markdown("""
         }
 
         /* ------------------------------------------------------------- */
-        /* [모바일 버전 스타일] - 가격 한줄 강제 & 폰트 대폭 축소 */
+        /* [모바일 버전 스타일] - 768px 이하일 때 적용 */
         /* ------------------------------------------------------------- */
         @media only screen and (max-width: 768px) {
-            /* 1. 제목: 0.7rem */
+            
+            /* [핵심] 가격 버튼 강제 축소 (내부 글자까지 타겟팅) */
+            div[data-testid="stPopover"] button {
+                width: calc(100% - 8px) !important; 
+                margin: 0 4px 2px 4px !important;
+                min-height: 20px !important; /* 버튼 높이 납작하게 */
+                padding: 0px !important;
+                border-radius: 4px !important;
+            }
+            
+            /* 버튼 안의 '모든' 글자 요소 강제 축소 */
+            div[data-testid="stPopover"] button * {
+                font-size: 10px !important; /* 글자 크기 10px로 고정 */
+                line-height: 20px !important; /* 줄 간격 */
+                white-space: nowrap !important; /* 줄바꿈 절대 금지 */
+            }
+
+            /* 나머지 요소 축소 */
             .card-title {
                 font-size: 0.7rem !important;
                 height: 40px !important;
@@ -148,32 +165,16 @@ st.markdown("""
                 margin-bottom: 2px !important;
                 line-height: 1.2 !important;
             }
-            
-            /* 2. 카드 ID: 0.6rem */
             .card-id { 
                 font-size: 0.6rem !important; 
                 margin-bottom: 2px !important; 
                 padding: 0 6px !important; 
             }
-            
-            /* 3. [핵심 수정] 가격 버튼: 절대 줄바꿈 안 되게 설정 */
-            div[data-testid="stPopover"] button {
-                width: calc(100% - 8px) !important; 
-                margin: 0 4px 2px 4px !important;
-                font-size: 10px !important; /* 10px로 고정 (매우 작음) */
-                white-space: nowrap !important; /* [중요] 줄바꿈 금지 */
-                min-height: 20px !important; 
-                padding: 0px !important;
-                line-height: 20px !important;
-            }
-            
-            /* 4. 링크/태그 글씨: 0.6rem */
             .market-btn { font-size: 0.6rem !important; padding: 4px 0 !important; }
-            .stock-tag { font-size: 0.6rem !important; padding: 2px 4px !important; }
+            .stock-tag { font-size: 0.6rem !important; padding: 1px 4px !important; }
             .change-indicator { font-size: 0.6rem !important; }
             .compact-info-row { padding: 0 6px !important; margin-bottom: 2px !important; }
             
-            /* 5. 여백 최소화 */
             .block-container {
                 padding-top: 0.5rem !important; padding-bottom: 1rem !important;
                 padding-left: 0.2rem !important; padding-right: 0.2rem !important;
