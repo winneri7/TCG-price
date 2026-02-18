@@ -104,7 +104,7 @@ def get_yuyutei_info(game, card_id):
         return {"price": price, "stock": stock, "img": img_url, "t_ja": t_ja, "t_ko": t_ko, "url": d_url}
     except: return None
 
-# --- 4. COMMERCIAL DESIGN SYSTEM (최종 모바일 최적화) ---
+# --- 4. COMMERCIAL DESIGN SYSTEM (PC 줄바꿈 방지 적용) ---
 st.set_page_config(page_title="TCG 시세동향 Pro", layout="wide")
 st.markdown("""
     <style>
@@ -116,7 +116,7 @@ st.markdown("""
         .stDataFrame, div[data-testid="stTable"] { background: white !important; border-radius: 8px; border: 1px solid #E2E8F0; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
         
         /* ------------------------------------------------------------- */
-        /* [PC 버전 스타일] - 변경 없음 */
+        /* [PC 버전 스타일] - 여기에 줄바꿈 방지 코드 추가 */
         /* ------------------------------------------------------------- */
         .card-title { 
             font-weight: 700; font-size: 0.95rem; color: #0F172A; line-height: 1.4; 
@@ -135,29 +135,56 @@ st.markdown("""
             box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.05); overflow: hidden;
         }
 
+        /* [PC - 정보 행 줄바꿈 방지 핵심] */
+        .compact-info-row { 
+            padding: 0 10px; /* 좌우 여백 살짝 축소 */
+            margin-top: 2px; margin-bottom: 8px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            flex-wrap: nowrap !important; /* 줄바꿈 절대 금지 */
+        }
+        .change-indicator { 
+            font-size: 0.75rem; font-weight: 700; 
+            white-space: nowrap !important; /* 텍스트 줄바꿈 금지 */
+        }
+        .stock-tag { 
+            font-size: 0.9rem; color: #475569; font-weight: 700; 
+            background: #F1F5F9; padding: 3px 10px; border-radius: 6px; 
+            white-space: nowrap !important; /* 텍스트 줄바꿈 금지 */
+        }
+
         /* ------------------------------------------------------------- */
-        /* [모바일 버전 스타일] - 768px 이하 (Price 10% ↓, Others ↓) */
+        /* [모바일 버전 스타일] - 768px 이하 */
         /* ------------------------------------------------------------- */
         @media only screen and (max-width: 768px) {
             
-            /* [Price 버튼] 높이와 여백 */
             div[data-testid="stPopover"] button {
                 width: calc(100% - 8px) !important; 
                 margin: 0 4px 2px 4px !important;
-                min-height: 22px !important; /* 버튼 높이 살짝 줄임 */
+                min-height: 22px !important;
                 padding: 0px !important;
                 border-radius: 4px !important;
             }
-            /* [Price 글씨] 12px -> 11px (약 10% 감소) */
             div[data-testid="stPopover"] button * {
-                font-size: 11px !important; /* [축소] 최종 반영 */
+                font-size: 11px !important;
                 line-height: 22px !important;
-                white-space: nowrap !important; /* 줄바꿈 금지 */
+                white-space: nowrap !important;
             }
 
-            /* [나머지 글씨] 20% 축소 유지 */
+            .compact-info-row {
+                padding: 0 4px !important; 
+                margin-bottom: 2px !important;
+                flex-wrap: nowrap !important; /* 모바일도 방지 */
+                gap: 1px !important;
+            }
+            .change-indicator, .stock-tag {
+                white-space: nowrap !important;
+                font-size: 0.45rem !important; 
+                min-width: 0 !important;
+            }
+            .stock-tag { padding: 1px 3px !important; } 
             
-            /* 1. 제목: 0.7rem -> 0.55rem */
             .card-title {
                 font-size: 0.55rem !important;
                 height: 32px !important;
@@ -166,23 +193,13 @@ st.markdown("""
                 margin-bottom: 2px !important;
                 line-height: 1.2 !important;
             }
-            
-            /* 2. 카드 ID: 0.6rem -> 0.5rem */
             .card-id { 
                 font-size: 0.5rem !important; 
                 margin-bottom: 2px !important; 
                 padding: 0 6px !important; 
             }
-            
-            /* 3. 링크 버튼: 0.6rem -> 0.5rem */
             .market-btn { font-size: 0.5rem !important; padding: 4px 0 !important; }
             
-            /* 4. 재고/변동폭: 0.6rem -> 0.5rem */
-            .stock-tag { font-size: 0.5rem !important; padding: 1px 4px !important; }
-            .change-indicator { font-size: 0.5rem !important; }
-            .compact-info-row { padding: 0 6px !important; margin-bottom: 2px !important; }
-            
-            /* 5. 여백 최소화 */
             .block-container {
                 padding-top: 0.5rem !important; padding-bottom: 1rem !important;
                 padding-left: 0.2rem !important; padding-right: 0.2rem !important;
@@ -191,8 +208,6 @@ st.markdown("""
                 border-radius: 8px !important;
                 margin-bottom: 8px !important;
             }
-            
-            /* 섹션 제목 */
             .section-header {
                 font-size: 0.9rem !important; padding: 6px 10px !important;
                 margin: 10px 0 8px 0 !important;
@@ -206,9 +221,6 @@ st.markdown("""
         .market-btn:last-child { border-right: none; }
         .market-btn:hover { background: white; color: #B45309 !important; font-weight: 700; }
         .section-header { background: white; padding: 12px 20px; border-radius: 10px; border-left: 5px solid #B45309; box-shadow: 0 2px 4px rgba(0,0,0,0.03); margin: 25px 0 15px 0; font-size: 1.1rem; font-weight: 700; color: #1E293B; display: flex; align-items: center; }
-        .compact-info-row { padding: 0 14px; margin-top: 2px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
-        .change-indicator { font-size: 0.75rem; font-weight: 700; }
-        .stock-tag { font-size: 0.9rem; color: #475569; font-weight: 700; background: #F1F5F9; padding: 3px 10px; border-radius: 6px; }
     </style>
 """, unsafe_allow_html=True)
 
@@ -365,7 +377,8 @@ def render_grid(target_df):
                         if len(c_hist) > 1:
                             fig = px.line(c_hist, x="date", y="price", markers=True)
                             fig.update_layout(height=200, margin=dict(l=10, r=10, t=10, b=10), showlegend=False)
-                            st.plotly_chart(fig, use_container_width=True)
+                            # [FIX] Add unique key to avoid duplicate ID error
+                            st.plotly_chart(fig, use_container_width=True, key=f"chart_{row['card_id']}")
                         else: st.info("데이터 수집 중입니다.")
 
                     st.markdown(f"""
