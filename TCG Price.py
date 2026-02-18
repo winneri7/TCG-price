@@ -104,7 +104,7 @@ def get_yuyutei_info(game, card_id):
         return {"price": price, "stock": stock, "img": img_url, "t_ja": t_ja, "t_ko": t_ko, "url": d_url}
     except: return None
 
-# --- 4. COMMERCIAL DESIGN SYSTEM (PC 줄바꿈 방지 적용) ---
+# --- 4. COMMERCIAL DESIGN SYSTEM (PC 작게 / 모바일 크게 원복) ---
 st.set_page_config(page_title="TCG 시세동향 Pro", layout="wide")
 st.markdown("""
     <style>
@@ -116,28 +116,40 @@ st.markdown("""
         .stDataFrame, div[data-testid="stTable"] { background: white !important; border-radius: 8px; border: 1px solid #E2E8F0; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
         
         /* ------------------------------------------------------------- */
-        /* [PC 버전 스타일] - 여기에 줄바꿈 방지 코드 추가 */
+        /* [PC 버전 스타일] - 글씨를 전체적으로 작고 슬림하게 수정 */
         /* ------------------------------------------------------------- */
         .card-title { 
-            font-weight: 700; font-size: 0.95rem; color: #0F172A; line-height: 1.4; 
+            font-weight: 700; 
+            font-size: 0.8rem; /* 0.95 -> 0.8로 축소 */
+            color: #0F172A; line-height: 1.4; 
             margin-bottom: 4px; padding: 0 14px;
-            display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; height: 65px;
+            display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; height: 60px; /* 높이도 약간 축소 */
         }
-        .card-id { font-size: 0.75rem; color: #94A3B8; font-weight: 500; margin-bottom: 8px; padding: 0 14px; }
+        .card-id { 
+            font-size: 0.65rem; /* 0.75 -> 0.65로 축소 */
+            color: #94A3B8; font-weight: 500; margin-bottom: 8px; padding: 0 14px; 
+        }
         div[data-testid="stPopover"] button {
             width: calc(100% - 28px); margin-left: 14px; margin-right: 14px;
-            font-size: 1.1rem !important; padding: 4px 0px !important; min-height: auto !important;
+            font-size: 0.9rem !important; /* 1.1 -> 0.9로 축소 */
+            padding: 2px 0px !important; 
+            min-height: auto !important;
             border: 1px solid #E2E8F0 !important; background-color: #F8FAFC !important; color: #0F172A !important; font-weight: 800 !important;
         }
-        .market-btn { font-size: 0.75rem !important; padding: 10px 0; }
+        .market-btn { 
+            font-size: 0.7rem !important; /* 0.75 -> 0.7로 축소 */
+            padding: 8px 0; 
+        }
+        
+        /* 카드 박스 */
         [data-testid="stVerticalBlockBorderWrapper"] {
             background-color: white; border: 1px solid #E2E8F0; border-radius: 16px; padding: 0px !important; margin-bottom: 24px;
             box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.05); overflow: hidden;
         }
 
-        /* [PC - 정보 행 줄바꿈 방지 핵심] */
+        /* [PC 정보 행 - 글씨 축소 + 줄바꿈 방지] */
         .compact-info-row { 
-            padding: 0 10px; /* 좌우 여백 살짝 축소 */
+            padding: 0 14px; 
             margin-top: 2px; margin-bottom: 8px; 
             display: flex; 
             justify-content: space-between; 
@@ -145,72 +157,79 @@ st.markdown("""
             flex-wrap: nowrap !important; /* 줄바꿈 절대 금지 */
         }
         .change-indicator { 
-            font-size: 0.75rem; font-weight: 700; 
-            white-space: nowrap !important; /* 텍스트 줄바꿈 금지 */
+            font-size: 0.7rem; /* 0.75 -> 0.7로 축소 */
+            font-weight: 700; 
+            white-space: nowrap !important;
         }
         .stock-tag { 
-            font-size: 0.9rem; color: #475569; font-weight: 700; 
-            background: #F1F5F9; padding: 3px 10px; border-radius: 6px; 
-            white-space: nowrap !important; /* 텍스트 줄바꿈 금지 */
+            font-size: 0.75rem; /* 0.9 -> 0.75로 축소 */
+            color: #475569; font-weight: 700; 
+            background: #F1F5F9; padding: 2px 8px; border-radius: 6px; 
+            white-space: nowrap !important;
         }
 
         /* ------------------------------------------------------------- */
-        /* [모바일 버전 스타일] - 768px 이하 */
+        /* [모바일 버전 스타일] - 768px 이하 (글씨 크기 원복: 큼직하게) */
         /* ------------------------------------------------------------- */
         @media only screen and (max-width: 768px) {
             
+            /* Price 버튼: 다시 큼직하게 */
             div[data-testid="stPopover"] button {
-                width: calc(100% - 8px) !important; 
-                margin: 0 4px 2px 4px !important;
-                min-height: 22px !important;
-                padding: 0px !important;
-                border-radius: 4px !important;
+                width: calc(100% - 16px) !important; /* 여백 다시 확보 */
+                margin: 0 8px 4px 8px !important;
+                min-height: auto !important; /* 높이 제한 해제 */
+                padding: 4px 0px !important;
+                border-radius: 8px !important;
             }
             div[data-testid="stPopover"] button * {
-                font-size: 11px !important;
-                line-height: 22px !important;
-                white-space: nowrap !important;
+                font-size: 1rem !important; /* [원복] 16px 정도 */
+                line-height: 1.2 !important;
+                white-space: normal !important; /* 줄바꿈 허용 (크니까) */
             }
 
+            /* 정보 행 (모바일용: 줄바꿈 방지는 유지하되 글씨는 키움) */
             .compact-info-row {
-                padding: 0 4px !important; 
-                margin-bottom: 2px !important;
-                flex-wrap: nowrap !important; /* 모바일도 방지 */
-                gap: 1px !important;
+                padding: 0 8px !important; 
+                margin-bottom: 6px !important;
+                flex-wrap: nowrap !important;
+                gap: 4px !important;
             }
-            .change-indicator, .stock-tag {
-                white-space: nowrap !important;
-                font-size: 0.45rem !important; 
-                min-width: 0 !important;
+            .change-indicator {
+                font-size: 0.75rem !important; /* [원복] 잘 보이게 */
             }
-            .stock-tag { padding: 1px 3px !important; } 
+            .stock-tag {
+                font-size: 0.75rem !important; /* [원복] 잘 보이게 */
+                padding: 2px 6px !important;
+            }
             
+            /* 제목, ID 등 */
             .card-title {
-                font-size: 0.55rem !important;
-                height: 32px !important;
+                font-size: 0.85rem !important; /* [원복] */
+                height: auto !important; /* 높이 자동 */
                 -webkit-line-clamp: 2 !important;
-                padding: 0 6px !important;
-                margin-bottom: 2px !important;
-                line-height: 1.2 !important;
+                padding: 0 8px !important;
+                margin-bottom: 4px !important;
+                line-height: 1.3 !important;
             }
             .card-id { 
-                font-size: 0.5rem !important; 
-                margin-bottom: 2px !important; 
-                padding: 0 6px !important; 
+                font-size: 0.7rem !important; /* [원복] */
+                margin-bottom: 4px !important; 
+                padding: 0 8px !important; 
             }
-            .market-btn { font-size: 0.5rem !important; padding: 4px 0 !important; }
+            .market-btn { font-size: 0.7rem !important; padding: 8px 0 !important; }
             
+            /* 여백: 조금 여유 있게 */
             .block-container {
-                padding-top: 0.5rem !important; padding-bottom: 1rem !important;
-                padding-left: 0.2rem !important; padding-right: 0.2rem !important;
+                padding-top: 1rem !important; padding-bottom: 2rem !important;
+                padding-left: 0.5rem !important; padding-right: 0.5rem !important;
             }
             [data-testid="stVerticalBlockBorderWrapper"] {
-                border-radius: 8px !important;
-                margin-bottom: 8px !important;
+                border-radius: 12px !important;
+                margin-bottom: 12px !important;
             }
             .section-header {
-                font-size: 0.9rem !important; padding: 6px 10px !important;
-                margin: 10px 0 8px 0 !important;
+                font-size: 1rem !important; padding: 8px 12px !important;
+                margin: 15px 0 10px 0 !important;
             }
         }
         
